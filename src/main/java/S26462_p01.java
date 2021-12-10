@@ -17,13 +17,20 @@ public class S26462_p01 {
     private static Boolean finishGame = false;
 
     //    definicje figur
-    private static String[] WhiteFigure = new String[]{"\u001B[34m\u2654  "/*król*/, "\u001B[34m\u2655  "/*hetman*/,
-            "\u001B[34m\u2656  "/*wieża*/, "\u001B[34m\u2657  "/*laufer*/, "\u001B[34m\u2658  "/*skoczek*/,
-            "\u001B[34m\u2659  "/*pion*/};
+//    private static String[] WhiteFigure = new String[]{"\u001B[34m\u2654  "/*król*/, "\u001B[34m\u2655  "/*hetman*/,
+//            "\u001B[34m\u2656  "/*wieża*/, "\u001B[34m\u2657  "/*goniec*/, "\u001B[34m\u2658  "/*skoczek*/,
+//            "\u001B[34m\u2659  "/*pion*/};
+//
+//    private static String[] BlackFigure = new String[]{"\u001B[31m\u265A  "/*król*/, "\u001B[31m\u265B  "/*hetman*/,
+//            "\u001B[31m\u265C  "/*wieża*/, "\u001B[31m\u265D  "/*goniec*/, "\u001B[31m\u265E  "/*skoczek*/,
+//            "\u001B[31m\u265F  " /*pion*/};
+    private static String[] WhiteFigure = new String[]{" \u2654 "/*król*/, " \u2655 "/*hetman*/,
+            " \u2656 "/*wieża*/, " \u2657 "/*goniec*/, " \u2658 "/*skoczek*/,
+            " \u2659 "/*pion*/};
 
-    private static String[] BlackFigure = new String[]{"\u001B[31m\u265A  "/*król*/, "\u001B[31m\u265B  "/*hetman*/,
-            "\u001B[31m\u265C  "/*wieża*/, "\u001B[31m\u265D  "/*laufer*/, "\u001B[31m\u265E  "/*skoczek*/,
-            "\u001B[31m\u265F  " /*pion*/};
+    private static String[] BlackFigure = new String[]{" \u265A "/*król*/, " \u265B "/*hetman*/,
+            " \u265C "/*wieża*/, " \u265D "/*goniec*/, " \u265E "/*skoczek*/,
+            " \u265F " /*pion*/};
 
 
     public static void main(String[] args) {
@@ -40,6 +47,8 @@ public class S26462_p01 {
         clearConsole();
 //plansza do gry
         System.out.println("Gra w szachy!");
+        System.out.println("length od blackfigure[1] = " + BlackFigure[1].length());
+        System.out.println("length od empty = " + empty.length());
 //wyświetlenie listy figur
         showChessPieces();
 //narysowanie pierwotnego rozstawienia
@@ -56,17 +65,6 @@ public class S26462_p01 {
                 }
                 System.out.println("Podaj współrzędne początkowe zgodnie ze wzorem np. A1");
                 fromMove = scan.nextLine();
-//                TODO Bonus, krótkie menu
-//                if (fromMove == "help") {
-//                    help();
-//                    continue;
-//                }
-//                if (fromMove == "restart") {
-//                    ChessBoard = firstSeeding();
-//                    drawBoard(ChessBoard);
-//                    continue;
-//                }
-
 //              sprawdzam czy ktoś nie podał za dużej liczby znaków
                 if (fromMove.length() != 2) {
                     System.out.println("Współrzędne nieprawidłowe");
@@ -85,16 +83,6 @@ public class S26462_p01 {
             while (!endLocation) {
                 System.out.println("Podaj współrzędne końcowe zgodnie ze wzorem np. A3");
                 toMove = scan.nextLine();
-//                TODO Bonus, krótkie menu
-//                if (toMove == "help") {
-//                    help();
-//                    continue;
-//                }
-//                if (toMove == "restart") {
-//                    ChessBoard = firstSeeding();
-//                    drawBoard(ChessBoard);
-//                    continue;
-//                }
                 if (toMove.equals("0")) {
                     endLocation = true;
                     continue;
@@ -103,10 +91,6 @@ public class S26462_p01 {
                     System.out.println("Współrzędne nieprawidłowe");
                     continue;
                 } else {
-//                    TODO uporządkować ruch, przenieść wszystko do metody move
-//                    if (!checkLocation(ChessBoard, toMove, "end", player)) {
-//                        System.out.println("Ta pozycja jest zajęta");
-//                    } else {
                     if (checkMove(fromMove, toMove, player)) {
                         move(fromMove, toMove);
 //                          ustawiam odpowiedniego gracza
@@ -137,6 +121,7 @@ public class S26462_p01 {
     // metoda do rysowania planszy, jako argument podaje się tablicę z aktualnym stanem figur
     private static void drawBoard(String[][] ChessBoard) {
         // Wyświetlenie i pokolorowanie planszy
+        System.out.println("Jeżeli chcesz rozpocząć ruch od nowa, to wpisz w konsoli 0.");
         for (int i = 0; i < ChessBoard.length; i++) {
             for (int j = 0; j < ChessBoard[i].length; j++) {
                 if (i == 0 || i == ChessBoard.length - 1 || j == 0 || j == ChessBoard[j].length - 1) {
@@ -154,10 +139,12 @@ public class S26462_p01 {
                                 case 3:
                                 case 5:
                                 case 7:
-                                    System.out.print("\u001B[40m \u001B[37m"); // czarne tło, białe napisy
+//                                    System.out.print("\u001B[40m \u001B[37m"); // czarne tło, białe napisy 3;43;30m
+                                    System.out.print("\u001B[3;100;30m"); // czarne tło, białe napisy 3;104;30m
                                     break;
                                 default:
-                                    System.out.print("\u001B[47m \u001B[30m"); // białe tło, czarne napisy
+//                                    System.out.print("\u001B[47m \u001B[30m"); // białe tło, czarne napisy
+                                    System.out.print("\u001B[47m"); // białe tło, czarne napisy
                                     break;
                             }
                             break;
@@ -170,10 +157,12 @@ public class S26462_p01 {
                                 case 3:
                                 case 5:
                                 case 7:
-                                    System.out.print("\u001B[47m \u001B[30m"); // białe tło, czarne napisy
+//                                    System.out.print("\u001B[47m \u001B[30m"); // białe tło, czarne napisy
+                                    System.out.print("\u001B[47m"); // białe tło, czarne napisy
                                     break;
                                 default:
-                                    System.out.print("\u001B[40m \u001B[37m"); // czarne tło, białe napisy
+//                                    System.out.print("\u001B[40m \u001B[37m"); // czarne tło, białe napisy
+                                    System.out.print("\u001B[3;100;30m"); // czarne tło, białe napisy 3;104;30m
                                     break;
                             }
                     }
@@ -194,7 +183,7 @@ public class S26462_p01 {
         System.out.println("Lista figur \"białych\"");
 
         for (int i = 0; i < WhiteFigure.length; i++) {
-            System.out.print("\u001B[40m\u001B[34m"); // białe tło, niebieskie napisy
+//            System.out.print("\u001B[40m\u001B[34m"); // białe tło, niebieskie napisy
             System.out.print(WhiteFigure[i] + "   ");
         }
         System.out.print("\u001B[40m\u001B[37m"); // czarne tło, białe napisy
@@ -203,7 +192,7 @@ public class S26462_p01 {
         System.out.println("Lista figur \"czarnych\":");
 
         for (int i = 0; i < BlackFigure.length; i++) {
-            System.out.print("\u001B[40m\u001B[31m"); // białe tło, czerwone napisy
+//            System.out.print("\u001B[40m\u001B[31m"); // białe tło, czerwone napisy
             System.out.print(BlackFigure[i] + "   ");
         }
 
@@ -363,7 +352,7 @@ public class S26462_p01 {
                 if (columnFrom == pawnStartPosition) {
 //                  pionem nie można poruszać się wstecz
                     if ((player == 1 && (columnFrom - columnTo) <= 2 && (columnFrom - columnTo) > 0) || (player == 2 && (columnFrom - columnTo) >= -2 && (columnFrom - columnTo) < 0)) {
-                        move(startLocation, endLocation);
+//                        move(startLocation, endLocation);
                         return true;
                     } else {
                         return false;
@@ -371,7 +360,7 @@ public class S26462_p01 {
 //                  jeżeli lokalizacja nie jest początkowa, wówczas ruch o 1 pole
                 } else {
                     if ((player == 1 && (columnFrom - columnTo) == 1) || (player == 2 && (columnFrom - columnTo) == -1)) {
-                        move(startLocation, endLocation);
+//                        move(startLocation, endLocation);
                         return true;
                     } else {
                         return false;
@@ -474,7 +463,7 @@ public class S26462_p01 {
 
     //wykonanie ruchu
     //wykonanie ruchu
-    private static String move(String startLocation, String endLocation) {
+    private static void move(String startLocation, String endLocation) {
         int colStart = Integer.parseInt(startLocation.substring(1, startLocation.length()));
         int colEnd = Integer.parseInt(endLocation.substring(1, endLocation.length()));
 
@@ -482,12 +471,9 @@ public class S26462_p01 {
             //wartość z pozycji początkowej przypisuję do wartości końcowej i czyszczę wartość początkową
             ChessBoard[colEnd][checkRow(endLocation)] = ChessBoard[colStart][checkRow(startLocation)];
             ChessBoard[colStart][checkRow(startLocation)] = "   ";
-        } else {
-            return "Nie możesz wykonać ruchu na to pole!";
         }
         clearConsole();
         drawBoard(ChessBoard);
-        return "Wykonano ruch";
     }
 
     //sprawdzanie ruchu w poziomie
@@ -675,16 +661,4 @@ public class S26462_p01 {
         }
         return false;
     }
-
-
-//    TODO help
-//    private static void help() {
-//        System.out.println("Witaj w pomocy!");
-//        System.out.println("Jeżeli chcesz poddać grę wpisz \"koniec\"");
-//        System.out.println("Jeżeli rozpocząć grę od nowa wpisz \"restart\" - " +
-//                "uwaga drugi gracz będzie musiał zaakceptować tę operację, poprzez wpisanie \"tak\"");
-//        System.out.println("Jeżeli chcesz anulować wybór początkowej pozycji, w końcowej wpisz 0.");
-//
-//    }
-
 }
