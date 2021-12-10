@@ -661,4 +661,30 @@ public class S26462_p01 {
         }
         return false;
     }
+
+    private static Boolean check(Integer player) {
+        String whiteKing = WhiteFigure[0];
+        String blackKing = BlackFigure[0];
+//      w zależności od gracza lokalizuję jego króla
+        for(int i = 0; i <= ChessBoard.length; i++) {
+            for(int j = 0; j <=ChessBoard[i].length; j++ ) {
+                if(player == 1) {
+                    if (ChessBoard[i][j] == whiteKing) {
+//                      sprawdzam obecność obcych figur w pionie i poziomie
+                        for(int n = 0; n < ChessBoard.length; n++){
+                            if(checkTookPiece(i,n,player)){
+                                for(int m = 0; m <= BlackFigure.length; m++){
+                                    if(ChessBoard[i][n] == BlackFigure[m]){
+//                                        TODO sprawdzić jaka figura jest na drodze i czy może zbić
+                                    }
+                                }
+                            }
+                            checkTookPiece(n,j,player);
+                        }
+                    }
+                        break;
+                    }
+                }
+            }
+    }
 }
