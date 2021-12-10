@@ -246,7 +246,7 @@ public class S26462_p01 {
 //                      sprawdzam którego gracza kolej
                         if (player == 1) {
                             for (int i = 0; i < WhiteFigure.length; i++) {
-                                System.out.println("chessBoard[column][row] = " + chessBoard[column][row] + "WhiteFigure[" + i + "] = " + WhiteFigure[i]);
+//                                System.out.println("chessBoard[column][row] = " + chessBoard[column][row] + "WhiteFigure[" + i + "] = " + WhiteFigure[i]);
                                 if (chessBoard[column][row] == WhiteFigure[i]) {
                                     ok = true;
                                     break;
@@ -362,7 +362,6 @@ public class S26462_p01 {
 //              sprawdzam, czy jest to ruch z początkowej lokalizacji - wówczas może być o 2 pola
                 if (columnFrom == pawnStartPosition) {
 //                  pionem nie można poruszać się wstecz
-//                    if (abs(columnFrom - columnTo) <= 2) {
                     if ((player == 1 && (columnFrom - columnTo) <= 2 && (columnFrom - columnTo) > 0) || (player == 2 && (columnFrom - columnTo) >= -2 && (columnFrom - columnTo) < 0)) {
                         move(startLocation, endLocation);
                         return true;
@@ -371,7 +370,6 @@ public class S26462_p01 {
                     }
 //                  jeżeli lokalizacja nie jest początkowa, wówczas ruch o 1 pole
                 } else {
-//                    if (abs(columnFrom - columnTo) == 1) {
                     if ((player == 1 && (columnFrom - columnTo) == 1) || (player == 2 && (columnFrom - columnTo) == -1)) {
                         move(startLocation, endLocation);
                         return true;
@@ -395,7 +393,6 @@ public class S26462_p01 {
                 } else {
                     if (abs(checkRow(startLocation) - checkRow(endLocation)) == 1) {
                         for (int i = 0; i < WhiteFigure.length; i++) {
-//                            System.out.println("WhiteFigure[i] = " + WhiteFigure[i]);
                             if (ChessBoard[columnTo][checkRow(endLocation)] == WhiteFigure[i]) {
                                 tookPiece(endLocation);
                                 return true;
@@ -411,74 +408,59 @@ public class S26462_p01 {
 //      sprawdzenie ruchu dla wieży
         } else if (ChessBoard[columnFrom][checkRow(startLocation)] == rook) {
 //          sprawdzam czy ruch jest pionowy lub poziomy
-            System.out.println("verticalMove(startLocation, endLocation) = " + verticalMove(startLocation, endLocation));
-            System.out.println("horizontalMove(startLocation, endLocation) = " + horizontalMove(startLocation, endLocation));
-            if ((verticalMove(startLocation, endLocation)) || (horizontalMove(startLocation, endLocation))) {
-//              sprawdzam, czy nic nie stoi pomiędzy początkiem ruchu, a jego końcem w pionie
-                if (columnFrom > columnTo) {
-                    for (int i = columnFrom - 1; i > columnTo; i--) {
-                        System.out.println("aaa" + ChessBoard[i][rowFrom] + "aaa");
-                        if (ChessBoard[i][rowFrom] != empty) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                } else {
-                    for (int i = columnFrom + 1; i < columnTo; i++) {
-                        System.out.println("aaa" + ChessBoard[i][rowFrom] + "aaa");
-                        if (ChessBoard[i][rowFrom] != empty) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                }
-//              sprawdzam, czy nic nie stoi pomiędzy początkiem ruchu, a jego końcem w poziomie
-                if (rowFrom > rowTo) {
-                    for (int i = rowFrom - 1; i > rowTo; i--) {
-                        if (ChessBoard[columnFrom][i] != empty) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                } else {
-                    for (int i = rowFrom + 1; i < rowTo; i++) {
-                        if (ChessBoard[columnFrom][i] != empty) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                }
-                if (ok == false) {
-                    return false;
-                }
-//              sprawdzam, czy miejsce końcowe jest puste, jeżeli nie, to sparwdzam możliwość bicia
-                if (ChessBoard[columnTo][rowTo] == empty) {
-                    return true;
-                } else {
-                    if (player == 1) {
-                        for (int i = 0; i < BlackFigure.length; i++) {
-                            if (ChessBoard[columnTo][rowTo] == BlackFigure[i]) {
-                                tookPiece(endLocation);
-                                return true;
-                            }
-                        }
-                        return false;
-                    } else {
-                        for (int i = 0; i < WhiteFigure.length; i++) {
-                            if (ChessBoard[columnTo][rowTo] == WhiteFigure[i]) {
-                                tookPiece(endLocation);
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                }
-
-
+            if (checkHorVerMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                return true;
             } else {
-//              jeżeli nie jest to ruch ani pionowy, ani poziomy, to kończymy
                 return false;
             }
+
+//sprawdzanie ruchu dla gońca
+        } else if (ChessBoard[columnFrom][rowFrom] == bishop) {
+            if (checkCrossMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                return true;
+            } else {
+                return false;
+            }
+//      sprawdzenie ruchu dla skoczka
+        } else if (ChessBoard[columnFrom][rowFrom] == knight) {
+//          sprawdzenie ruchu l
+            if (lMove(startLocation, endLocation)) {
+//              sprawdzam, czy miejsce docelowe jest puste
+                if (ChessBoard[columnTo][rowTo] == empty) {
+                    return true;
+//              jeżeli miejsce docelowe nie jest puste, to sprawdzam bicie
+                } else if (checkTookPiece(columnTo, rowTo, player)) {
+                    tookPiece(endLocation);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+//      sprawdzenie ruchu dla hetmana
+        } else if (ChessBoard[columnFrom][rowFrom] == queen) {
+//          sprawdzam czy ruch jest pionowy lub poziomy
+            if (checkHorVerMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                return true;
+            } else if (checkCrossMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (ChessBoard[columnFrom][rowFrom] == king){
+            if (abs(columnFrom - columnTo) > 1 || abs(rowFrom - rowTo) > 1) {
+                return false;
+            } else {
+                if (checkHorVerMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                    return true;
+                } else if (checkCrossMove(startLocation, endLocation, rowFrom, rowTo, columnFrom, columnTo, player)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
         }
         return false;
     }
@@ -517,10 +499,10 @@ public class S26462_p01 {
         int columnTo = Integer.parseInt(toMove.substring(1, toMove.length()));
 
         if (rowFrom != rowTo && columnFrom == columnTo) {
-            System.out.println("horizontal rowFrom = " + rowFrom + ",columnFrom = " + columnFrom + ",  rowTo = " + rowTo + ",columnTo = " + columnTo);
+//            System.out.println("horizontal rowFrom = " + rowFrom + ",columnFrom = " + columnFrom + ",  rowTo = " + rowTo + ",columnTo = " + columnTo);
             return true;
         } else {
-            System.out.println("nie poziomy");
+//            System.out.println("nie poziomy");
             return false;
         }
     }
@@ -533,10 +515,10 @@ public class S26462_p01 {
         int rowTo = checkRow(toMove);
         int columnTo = Integer.parseInt(toMove.substring(1, toMove.length()));
         if (rowFrom == rowTo && columnFrom != columnTo) {
-            System.out.println("vertical rowFrom = " + rowFrom + ",columnFrom = " + columnFrom + ",  rowTo = " + rowTo + ",columnTo = " + columnTo);
+//            System.out.println("vertical rowFrom = " + rowFrom + ",columnFrom = " + columnFrom + ",  rowTo = " + rowTo + ",columnTo = " + columnTo);
             return true;
         } else {
-            System.out.println("nie pionowy");
+//            System.out.println("nie pionowy");
             return false;
         }
     }
@@ -572,6 +554,126 @@ public class S26462_p01 {
             return false;
         }
 
+    }
+
+    private static Boolean checkTookPiece(Integer column, Integer row, Integer player) {
+        if (player == 1) {
+            for (int i = 0; i < BlackFigure.length; i++) {
+                if (ChessBoard[column][row] == BlackFigure[i]) {
+//                    tookPiece(endLocation);
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            for (int i = 0; i < WhiteFigure.length; i++) {
+                if (ChessBoard[column][row] == WhiteFigure[i]) {
+//                    tookPiece(endLocation);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private static Boolean checkHorVerMove(String startLocation, String endLocation, Integer rowFrom, Integer rowTo, Integer columnFrom, Integer columnTo, Integer player) {
+        //          sprawdzam czy ruch jest pionowy lub poziomy
+        Boolean ok = true;
+        if ((verticalMove(startLocation, endLocation)) || (horizontalMove(startLocation, endLocation))) {
+            System.out.println("vertical lub horizontal");
+            System.out.println("columnFrom = " + columnFrom + ", columnTo = " + columnTo);
+//              sprawdzam, czy nic nie stoi pomiędzy początkiem ruchu, a jego końcem w pionie
+            if (columnFrom > columnTo) {
+                for (int i = columnFrom - 1; i > columnTo; i--) {
+                    if (ChessBoard[i][rowFrom] != empty) {
+                        System.out.println("coś tu stoi");
+                        ok = false;
+                        break;
+                    }
+                }
+            } else if (columnFrom < columnTo) {
+                for (int i = columnFrom + 1; i < columnTo; i++) {
+                    if (ChessBoard[i][rowFrom] != empty) {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            System.out.println("rowFrom = " + rowFrom + ", rowTo = " + rowTo);
+//              sprawdzam, czy nic nie stoi pomiędzy początkiem ruchu, a jego końcem w poziomie
+            if (rowFrom > rowTo) {
+                for (int i = rowFrom - 1; i > rowTo; i--) {
+                    if (ChessBoard[columnFrom][i] != empty) {
+                        ok = false;
+                        break;
+                    }
+                }
+            } else if (rowFrom < rowTo) {
+                for (int i = rowFrom + 1; i < rowTo; i++) {
+                    if (ChessBoard[columnFrom][i] != empty) {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if (ok == false) {
+                return false;
+            }
+//          sprawdzam, czy miejsce końcowe jest puste, jeżeli nie, to sparwdzam możliwość bicia
+            if (ChessBoard[columnTo][rowTo] == empty) {
+                return true;
+            } else {
+                if (checkTookPiece(columnTo, rowTo, player)) {
+                    tookPiece(endLocation);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+//              jeżeli nie jest to ruch ani pionowy, ani poziomy, to kończymy
+            return false;
+        }
+    }
+
+    private static Boolean checkCrossMove(String startLocation, String endLocation, Integer rowFrom, Integer rowTo, Integer columnFrom, Integer columnTo, Integer player) {
+        if (crossMove(startLocation, endLocation)) {
+//              sprawdzam, czy nic nie stoi na linii ruchu skośnego
+            for (int i = 1; i < abs(rowFrom - rowTo); i++) {
+//                  ruch na pónocny zachód
+                if (columnFrom > columnTo && rowFrom > rowTo) {
+                    if (ChessBoard[columnFrom - i][rowFrom - i] != empty) {
+                        return false;
+                    }
+//                  ruch na pónocny wschód
+                } else if (columnFrom > columnTo && rowFrom < rowTo) {
+                    if (ChessBoard[columnFrom - i][rowFrom + i] != empty) {
+                        return false;
+                    }
+//                  ruch na południowy zachód
+                } else if (columnFrom < columnTo && rowFrom > rowTo) {
+                    if (ChessBoard[columnFrom + i][rowFrom - i] != empty) {
+                        return false;
+                    }
+//                  ruch na południowy wschód
+                } else if (columnFrom < columnTo && rowFrom < rowTo) {
+                    if (ChessBoard[columnFrom + i][rowFrom + i] != empty) {
+                        return false;
+                    }
+                }
+            }
+//          sprawdzam, czy miejsce docelowe jest zajęte
+            if (ChessBoard[columnTo][rowTo].equals(empty)) {
+                return true;
+//          jeżeli jest zajęte, to sprawdzam bicie
+            } else if (checkTookPiece(columnTo, rowTo, player)) {
+                tookPiece(endLocation);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
 
